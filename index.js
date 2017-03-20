@@ -5,13 +5,13 @@ var app = express();
 
  
 var Client = require('pg').Client;
-//var pool = new Pool({ Client: Client });
+//var pool = new Pool({ Client: Client }); USER_VAL PWD_VAL DB_VAL HOST_VAL
 var config= {
-    user: "argxltzkgvkcce",
-    password: "9fb7d5a85b8aadca3a94a7167bced34b58e752711714fb838d86b158610f0fb6",
-	database: "d42h20easlldg4",
+    user: process.env.USER_VAL,
+    password: process.env.PWD_VAL,
+	database: process.env.DB_VAL,
 	port: 5432,
-	host: "ec2-23-21-80-230.compute-1.amazonaws.com",
+	host: process.env.HOST_VAL,
     ssl: true,
 	max: 10, // max number of clients in the pool
     idleTimeoutMillis: 30000
