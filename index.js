@@ -1,6 +1,25 @@
+charset="utf-8"
 var cool = require('cool-ascii-faces');
 var express = require('express');
 var app = express();
+
+ 
+var Client = require('pg').Client;
+//var pool = new Pool({ Client: Client });
+var config= {
+    user: "argxltzkgvkcce",
+    password: "9fb7d5a85b8aadca3a94a7167bced34b58e752711714fb838d86b158610f0fb6",
+	database: "d42h20easlldg4",
+	port: 5432,
+	host: "ec2-23-21-80-230.compute-1.amazonaws.com",
+    ssl: true,
+	max: 10, // max number of clients in the pool
+    idleTimeoutMillis: 30000
+}
+
+
+
+
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -17,7 +36,27 @@ app.get('/', function(request, response) {
 app.get('/cool', function(request, response) {
   response.send(cool());
 });
+app.get('/db', function (req, res){
+	
+	 var client = new Client(config);
+     client.connect(function (err) {
+	if (err) throw err;
 
+	// execute a query on our database
+  
+	client.query('SELECT * FROM test_table', function (err, result){
+	if(err){
+		res.status(500).send(err.toString());
+		   } 
+    else   {
+        res.send(JSON.stringify(result.rows));
+	       }
+	client.end(function (err) {
+    if (err) throw err;
+    });
+	});
+	});
+});
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
