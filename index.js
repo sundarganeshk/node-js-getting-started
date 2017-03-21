@@ -2,25 +2,11 @@ charset="utf-8"
 var cool = require('cool-ascii-faces');
 var express = require('express');
 var app = express();
+const pg = require('pg');
+var config = require('./config.json');
 
- 
-var Client = require('pg').Client;
-//var pool = new Pool({ Client: Client }); USER_VAL PWD_VAL DB_VAL HOST_VAL
-var config= {
-    user: process.env.USER_VAL,
-    password: process.env.PWD_VAL,
-	database: process.env.DB_VAL,
-	port: 5432,
-	host: process.env.HOST_VAL,
-    ssl: true,
-	max: 10, // max number of clients in the pool
-    idleTimeoutMillis: 30000
-}
-
-
-
-
-
+var dbConnectionConfig = { host:config.host, user:config.username, password:config.password, database:config.database, ssl:config.ssl };
+  
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
@@ -34,13 +20,13 @@ app.get('/', function(request, response) {
 });
 
 app.get('/cool', function(request, response) {
-  response.send(cool());
+	response.send(cool());
 });
 app.get('/db', function (req, res){
 	
-	 var client = new Client(config);
-     client.connect(function (err) {
-	if (err) throw err;
+	pg.connect(dbConnectionConfig, function(err, client) {
+		
+		if (err) throw err;
 
 	// execute a query on our database
   
@@ -57,6 +43,7 @@ app.get('/db', function (req, res){
 	});
 	});
 });
+//});
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
